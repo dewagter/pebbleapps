@@ -1,12 +1,12 @@
 {
   "uuid": "41833a12-dbdd-484b-93d7-eeed25e0efe2",
-  "shortName": "time_to_train",
-  "longName": "time_to_train",
-  "companyName": "MakeAwesomeHappen",
+  "shortName": "Time2Train",
+  "longName": "Time Until Next Train",
+  "companyName": "CDW",
   "versionCode": 1,
   "versionLabel": "1.0.0",
   "watchapp": {
-    "watchface": false
+    "watchface": true
   },
   "appKeys": {
     "dummy": 0
