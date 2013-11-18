@@ -41,6 +41,8 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
   }
 
   dt = train - dt;
+  if (dt < 0)
+    dt += 60;
 
   snprintf(train_text, 24, "%d:%d train in %d min", train_h, train, dt);
 
