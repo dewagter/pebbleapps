@@ -1,8 +1,8 @@
 {
   "uuid": "a77d5db1-ac3e-47b4-bda6-234e97eba20d",
-  "shortName": "ns",
-  "longName": "ns",
-  "companyName": "MakeAwesomeHappen",
+  "shortName": "NS-Vertrek",
+  "longName": "NS-Vertrekinformatie",
+  "companyName": "CDW",
   "versionCode": 1,
   "versionLabel": "1.0.0",
   "watchapp": {
