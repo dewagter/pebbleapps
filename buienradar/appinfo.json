@@ -1,0 +1,17 @@
+{
+  "uuid": "1fbbe2bc-b445-4fe3-947b-083f4ade0cce",
+  "shortName": "BuienRadar",
+  "longName": "BuienRadar",
+  "companyName": "CDW",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
