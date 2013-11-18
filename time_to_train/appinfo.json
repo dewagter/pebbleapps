@@ -1,0 +1,17 @@
+{
+  "uuid": "41833a12-dbdd-484b-93d7-eeed25e0efe2",
+  "shortName": "time_to_train",
+  "longName": "time_to_train",
+  "companyName": "MakeAwesomeHappen",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
