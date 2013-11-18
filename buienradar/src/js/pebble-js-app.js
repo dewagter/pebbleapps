@@ -8,7 +8,7 @@ Pebble.addEventListener("ready",
             if(req.status == 200 /* 200 - HTTP OK */) {
               console.log(req.responseText);
               response = req.responseText;
-              Pebble.showSimpleNotificationOnPebble("BuienRadar", response);
+              Pebble.showSimpleNotificationOnPebble("BuienRadar", "Haarlem\n" + response);
             } else {
               console.log("Request returned error code " + req.status.toString());
             }
