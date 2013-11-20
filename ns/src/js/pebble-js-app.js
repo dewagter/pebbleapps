@@ -38,7 +38,7 @@ function fetchNSInfo(station) {
       }
     }
     req.send(null);
-    Pebble.sendAppMessage({"status": "JS sent request"});
+    Pebble.sendAppMessage({"status": "JS waits for http"});
   }
 
 Pebble.addEventListener("ready",

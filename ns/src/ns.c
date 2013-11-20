@@ -26,6 +26,7 @@ static void fetch_station(char* Station) {
   dict_write_end(iter);
 
   app_message_outbox_send();
+  text_layer_set_text(status_layer, "App sent request.");
 }
 
 ///////////////////////////////////////////////////////////
