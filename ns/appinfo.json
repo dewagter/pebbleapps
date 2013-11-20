@@ -10,7 +10,8 @@
   },
   "appKeys": {
     "status": 0,
-    "train": 1
+    "train": 1,
+    "station":2
   },
   "resources": {
     "media": []
