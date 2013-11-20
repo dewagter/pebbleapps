@@ -1,83 +1,70 @@
-function parse_xml(ns_xml) {
-  var res = "Res=";
-  var tag = false;
-  var cnt = 0;
-  for (i = 0; i < ns_xml.length ; i++) {
-    chr = ns_xml.charAt(i);
-    if (chr == '<') {
-      tag = true;
-      cnt = 0;
-    } else {
-      if (chr == '>') {
-        tag = false;
-/*        switch (tagname)
-        {
-          case 'r':  // Ritnr
-            res+= '>';
-            break;
-          case 'i':  // Tijd
-            res+= '|';
-            break;
-          case 'e':  // BEstemming
-            res+= '|';
-            break;
-          case 's':  // Ritnr
-            res+= '|';
-            break;
-          case 'e':  // Ritnr
-            res+= '|';
-            break;
-          case 'e':  // Ritnr
-            res+= '>';
-            break;
-          default:  // Ritnr
-            res+= '|';
-            break;
-        }
-  */
-      } else {
-        if (!tag) {
-          if (chr != ' ')
-            if (chr != '\n')
-              if (tagname != 's')
-                res += chr;
-        }
-        else
-        {
-          cnt++;
-          if (cnt == 9)
-            tagname = chr;
-          if (chr == '/')
-            res+='|';
+function parse_ns_xml(nodelist)
+{
+  var msg = "Haarlem\n";
+  for ( i=0; i< nodelist.length; i++)
+  {
+    msg += nodelist[i].getElementsByTagName('VertrekSpoor')[0].firstChild.nodeValue + "|";
+    if (nodelist[i].getElementsByTagName('VertrekVertragingTekst').length > 0) {
+      msg += nodelist[i].getElementsByTagName('VertrekVertragingTekst')[0].firstChild.nodeValue+"|";
+    }
+    msg += nodelist[i].getElementsByTagName('VertrekTijd')[0].firstChild.nodeValue + "|";
+    msg += nodelist[i].getElementsByTagName('EindBestemming')[0].firstChild.nodeValue + "";
+    msg += "\n";
+  }
+  //console.log(msg);
+  return msg;
+}
+
+function fetchNSInfo(station) {
+    var req = new XMLHttpRequest();
+    req.open('GET', "http://webservices.ns.nl/ns-api-avt?station=" + station, true);
+    req.onload = function(e) {
+      if (req.readyState == 4) {
+        if(req.status == 200 /* 200 - HTTP OK */) {
+          console.log(req.responseText);
+          nodelist = req.responseXML.getElementsByTagName("VertrekkendeTrein");
+          response = parse_ns_xml(nodelist);
+          Pebble.showSimpleNotificationOnPebble("NS-trein", response);
+        } else {
+          console.log("Request returned error code " + req.status.toString());
+          response = parse_xml(req.responseText);
+          Pebble.sendAppMessage({"status": "JS Error Login"});
         }
       }
+      else
+      {
+        console.log("Request not state 4 " + req.readyState.toString());
+        Pebble.sendAppMessage({"status": "JS Error State"});
+      }
     }
+    req.send(null);
+    Pebble.sendAppMessage({"status": "JS sent request"});
   }
-  return res;
-}
 
 Pebble.addEventListener("ready",
     function(e) {
+        Pebble.sendAppMessage({"status": "JS ready"});
         console.log("NS-JS: ReadyEvent=" + e.ready + "Type=" + e.type);
-        var req = new XMLHttpRequest();
-        req.open('GET', "http://webservices.ns.nl/ns-api-avt?station=DT", true);
-        req.onload = function(e) {
-          if (req.readyState == 4) {
-            if(req.status == 200 /* 200 - HTTP OK */) {
-              console.log(req.responseText);
-              response = parse_xml(req.responseText);
-              Pebble.showSimpleNotificationOnPebble("NS-trein", response);
-            } else {
-              console.log("Request returned error code " + req.status.toString());
-              response = parse_xml(req.responseText);
-              Pebble.showSimpleNotificationOnPebble("NS-trein", response);
-            }
-          }
-          else
-          {
-            console.log("Request not state 4 " + req.readyState.toString());
-          }
-        }
-        req.send(null);
     }
 );
+
+// Set callback for appmessage events
+Pebble.addEventListener("appmessage",
+    function(e) {
+      console.log("message");
+      if (e.payload.symbol) {
+        symbol = e.payload.symbol;
+        localStorage.setItem("symbol", symbol);
+        fetchStockQuote(symbol);
+      }
+      if (e.payload.fetch) {
+        Pebble.sendAppMessage({"symbol": symbol});
+        fetchStockQuote(symbol);
+      }
+      if (e.payload.price) {
+        fetchStockQuote(symbol);
+      }
+    }
+);
+
+
