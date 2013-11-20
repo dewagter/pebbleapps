@@ -1,18 +1,21 @@
 function parse_ns_xml(nodelist)
 {
   var msg = ""; 
-  for ( i=0; i< nodelist.length; i++)
+  for ( i=0; (i< nodelist.length) && (i<10); i++)
   {
-    msg += nodelist[i].getElementsByTagName('VertrekSpoor')[0].firstChild.nodeValue + ")";
+    msg += nodelist[i].getElementsByTagName('VertrekSpoor')[0].firstChild.nodeValue + ".";
     if (nodelist[i].getElementsByTagName('VertrekVertragingTekst').length > 0) {
       msg += nodelist[i].getElementsByTagName('VertrekVertragingTekst')[0].firstChild.nodeValue.replace(" min", "") + " ";
     }
     tijd = nodelist[i].getElementsByTagName('VertrekTijd')[0].firstChild.nodeValue.split("T")[1].split(":");
     msg += tijd[0] + ":" + tijd[1] + " ";
-    msg += nodelist[i].getElementsByTagName('EindBestemming')[0].firstChild.nodeValue;
+    dest = nodelist[i].getElementsByTagName('EindBestemming')[0].firstChild.nodeValue;
+    if (dest.length > 8)
+      dest = dest.substring(0,8);
+    msg += dest;
     msg += "\n";
   }
-  //console.log(msg);
+  console.log(msg);
   return msg;
 }
 
@@ -22,7 +25,7 @@ function fetchNSInfo(station) {
     req.onload = function(e) {
       if (req.readyState == 4) {
         if(req.status == 200 /* 200 - HTTP OK */) {
-          console.log(req.responseText);
+          //console.log(req.responseText);
           nodelist = req.responseXML.getElementsByTagName("VertrekkendeTrein");
           response = parse_ns_xml(nodelist);
           Pebble.showSimpleNotificationOnPebble(station, response);

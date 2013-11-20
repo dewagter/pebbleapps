@@ -66,7 +66,7 @@ static void app_message_init(void) {
 // BUTTONS
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(status_layer, "Up=Haarlem/Down=Delft?");
+  text_layer_set_text(status_layer, "Up=Haarlem/Dn=Delft?");
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
@@ -85,6 +85,34 @@ static void click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
 }
 
+
+///////////////////////////////////////////////////////////
+// TIME
+
+TextLayer *text_time_layer;
+
+void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
+  // Need to be static because they're used by the system later.
+  static char time_text[] = "00:00";
+
+  char *time_format;
+
+  if (clock_is_24h_style()) {
+    time_format = "%R";
+  } else {
+    time_format = "%I:%M";
+  }
+
+  strftime(time_text, sizeof(time_text), time_format, tick_time);
+
+  if (!clock_is_24h_style() && (time_text[0] == '0')) {
+    memmove(time_text, &time_text[1], sizeof(time_text) - 1);
+  }
+
+  text_layer_set_text(text_time_layer, time_text);
+}
+
+
 ///////////////////////////////////////////////////////////
 // WINDOW (UN)LOAD
 
@@ -94,10 +122,28 @@ static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  status_layer = text_layer_create((GRect) { .origin = { 0, 125 }, .size = { bounds.size.w, 20 } });
-  text_layer_set_text(status_layer, "Waiting for JS...");
+  TextLayer* s1_layer = text_layer_create((GRect) { .origin = { 0, 3 }, .size = { bounds.size.w, 20 } });
+  text_layer_set_text(s1_layer, "Haarlem>");
+  text_layer_set_text_alignment(s1_layer, GTextAlignmentRight);
+  text_layer_set_font(s1_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
+  layer_add_child(window_layer, text_layer_get_layer(s1_layer));
+
+  TextLayer* s2_layer = text_layer_create((GRect) { .origin = { 0, 133 }, .size = { bounds.size.w, 20 } });
+  text_layer_set_text(s2_layer, "Delft>");
+  text_layer_set_text_alignment(s2_layer, GTextAlignmentRight);
+  text_layer_set_font(s1_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
+  layer_add_child(window_layer, text_layer_get_layer(s2_layer));
+
+  status_layer = text_layer_create((GRect) { .origin = { 0, 100 }, .size = { bounds.size.w, 20 } });
+  text_layer_set_text(status_layer, "Select Station...");
+  text_layer_set_font(status_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   text_layer_set_text_alignment(status_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(status_layer));
+
+  text_time_layer = text_layer_create(GRect(7, 40, 144-7, 50));
+  text_layer_set_font(text_time_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
+  layer_add_child(window_layer, text_layer_get_layer(text_time_layer));
+
 }
 
 static void window_unload(Window *window) {
@@ -117,9 +163,16 @@ static void init(void) {
   });
   const bool animated = true;
   window_stack_push(window, animated);
+
+  time_t now = time(NULL);
+  struct tm *current_time = localtime(&now);
+  handle_minute_tick(current_time, MINUTE_UNIT);
+
+  tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
 }
 
 static void deinit(void) {
+  tick_timer_service_unsubscribe();
   window_destroy(window);
 }
 
