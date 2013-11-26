@@ -34,7 +34,6 @@ static void fetch_station(char* Station) {
 
 static void in_received_handler(DictionaryIterator *iter, void *context) {
   Tuple *status_tuple = dict_find(iter, NS_KEY_STATUS);
-//  Tuple *train_tuple = dict_find(iter, NS_KEY_TRAIN);
 
   if (status_tuple) {
     text_layer_set_text(status_layer, status_tuple->value->cstring);
