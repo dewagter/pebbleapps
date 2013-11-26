@@ -22,6 +22,7 @@ function parse_ns_xml(nodelist)
 function fetchNSInfo(station) {
     var req = new XMLHttpRequest();
     req.open('GET', "http://webservices.ns.nl/ns-api-avt?station=" + station, true);
+    req.setRequestHeader("Authorization", "Basic " + btoa("username:password"))
     req.onload = function(e) {
       if (req.readyState == 4) {
         if(req.status == 200 /* 200 - HTTP OK */) {
@@ -39,6 +40,9 @@ function fetchNSInfo(station) {
         console.log("Request not state 4 " + req.readyState.toString());
         Pebble.sendAppMessage({"status": "JS Error State"});
       }
+    }
+    req.onerror = function (e) {
+       Pebble.sendAppMessage({"status": "No internet"});
     }
     req.send(null);
     Pebble.sendAppMessage({"status": "JS waits for http"});
