@@ -26,6 +26,7 @@ static void fetch_buienradar() {
 
   app_message_outbox_send();
   text_layer_set_text(status_layer, "App sent request.");
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "App sent request to JS!");
 }
 
 ///////////////////////////////////////////////////////////
@@ -57,7 +58,6 @@ static void app_message_init(void) {
   // Init buffers
   app_message_open(64, 64);
 }
-
 
 
 

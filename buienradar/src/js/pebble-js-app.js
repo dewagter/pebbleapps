@@ -1,13 +1,14 @@
+
 function fetchBuienRadar() {
     var req = new XMLHttpRequest();
     req.open('GET', "http://gps.buienradar.nl/getrr.php?lat=52.3982969&lon=4.6431016", true);
     req.onload = function(e) {
       if (req.readyState == 4) {
-        if(req.status == 200 /* 200 - HTTP OK */) {
+        if(req.status == 200  ) { // 200 - HTTP OK
           console.log(req.responseText);
           response = req.responseText;
-          // if (response.length > 40)
 
+          Pebble.sendAppMessage({"status": "m.buienradar.nl"});
           Pebble.showSimpleNotificationOnPebble("BuienRadar", "Haarlem\n" + response);
         } else {
           console.log("Request returned error code " + req.status.toString());
@@ -19,10 +20,10 @@ function fetchBuienRadar() {
         console.log("Request not state 4 " + req.readyState.toString());
         Pebble.sendAppMessage({"status": "JS Error State"});
       }
-    };
+    }
     req.onerror = function (e) {
        Pebble.sendAppMessage({"status": "No internet"});
-    };
+    }
     req.send(null);
     Pebble.sendAppMessage({"status": "JS waits for http"});
 }
@@ -44,6 +45,10 @@ Pebble.addEventListener("appmessage",
         //localStorage.setItem("symbol", symbol);
         console.log("fetch");
         fetchBuienRadar();
+      }
+      else
+      {
+        Pebble.sendAppMessage({"status": "JS unknown msg"});
       }
     }
 );
