@@ -89,7 +89,7 @@ static void click_config_provider(void *context) {
 ///////////////////////////////////////////////////////////
 // TIME
 
-TextLayer *text_time_layer;
+static TextLayer *text_time_layer;
 
 void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
   // Need to be static because they're used by the system later.
@@ -117,18 +117,20 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 // WINDOW (UN)LOAD
 
 static Window *window;
+static TextLayer* s1_layer;
+static TextLayer* s2_layer;
 
 static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  TextLayer* s1_layer = text_layer_create((GRect) { .origin = { 0, 3 }, .size = { bounds.size.w, 20 } });
+  s1_layer = text_layer_create((GRect) { .origin = { 0, 3 }, .size = { bounds.size.w, 20 } });
   text_layer_set_text(s1_layer, "Haarlem>");
   text_layer_set_text_alignment(s1_layer, GTextAlignmentRight);
   text_layer_set_font(s1_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
   layer_add_child(window_layer, text_layer_get_layer(s1_layer));
 
-  TextLayer* s2_layer = text_layer_create((GRect) { .origin = { 0, 133 }, .size = { bounds.size.w, 20 } });
+  s2_layer = text_layer_create((GRect) { .origin = { 0, 133 }, .size = { bounds.size.w, 20 } });
   text_layer_set_text(s2_layer, "Delft>");
   text_layer_set_text_alignment(s2_layer, GTextAlignmentRight);
   text_layer_set_font(s1_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD));
@@ -148,6 +150,9 @@ static void window_load(Window *window) {
 
 static void window_unload(Window *window) {
   text_layer_destroy(status_layer);
+  text_layer_destroy(s1_layer);
+  text_layer_destroy(s2_layer);
+  text_layer_destroy(text_time_layer);
 }
 
 ///////////////////////////////////////////////////////////
